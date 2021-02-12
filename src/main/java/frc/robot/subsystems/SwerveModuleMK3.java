@@ -13,6 +13,16 @@ import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModuleMK3 {
 
+  // TODO: Tune these PID values for your robot
+  private static final double kDriveP = 15.0;
+  private static final double kDriveI = 0.01;
+  private static final double kDriveD = 0.1;
+  private static final double kDriveF = 0.2;
+
+  private static final double kAngleP = 1.0;
+  private static final double kAngleI = 0.0;
+  private static final double kAngleD = 0.0;
+
   // CANCoder has 4096 ticks/rotation
   private static double kEncoderTicksPerRotation = 4096;
 
@@ -26,11 +36,25 @@ public class SwerveModuleMK3 {
     this.canCoder = canCoder;
 
     TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
+
+    angleTalonFXConfiguration.slot0.kP = kAngleP;
+    angleTalonFXConfiguration.slot0.kI = kAngleI;
+    angleTalonFXConfiguration.slot0.kD = kAngleD;
+
     // Use the CANCoder as the remote sensor for the primary TalonFX PID
     angleTalonFXConfiguration.remoteFilter0.remoteSensorDeviceID = canCoder.getDeviceID();
     angleTalonFXConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
     angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
     angleMotor.configAllSettings(angleTalonFXConfiguration);
+
+    TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
+
+    driveTalonFXConfiguration.slot0.kP = kDriveP;
+    driveTalonFXConfiguration.slot0.kI = kDriveI;
+    driveTalonFXConfiguration.slot0.kD = kDriveD;
+    driveTalonFXConfiguration.slot0.kF = kDriveF;
+
+    driveMotor.configAllSettings(driveTalonFXConfiguration);
   }
 
 
