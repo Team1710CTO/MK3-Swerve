@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -9,6 +10,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModuleMK3 {
@@ -29,11 +31,13 @@ public class SwerveModuleMK3 {
   private TalonFX driveMotor;
   private TalonFX angleMotor;
   private CANCoder canCoder;
+  private double offset;
 
-  public SwerveModuleMK3(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder) {
+  public SwerveModuleMK3(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder, double offset) {
     this.driveMotor = driveMotor;
     this.angleMotor = angleMotor;
     this.canCoder = canCoder;
+    this.offset = offset;
 
     TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
 
@@ -44,8 +48,11 @@ public class SwerveModuleMK3 {
     // Use the CANCoder as the remote sensor for the primary TalonFX PID
     angleTalonFXConfiguration.remoteFilter0.remoteSensorDeviceID = canCoder.getDeviceID();
     angleTalonFXConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+    
     angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+    angleTalonFXConfiguration.integratedSensorOffsetDegrees = offset; //sets angle offset for PID within the talons
     angleMotor.configAllSettings(angleTalonFXConfiguration);
+    angleMotor.setNeutralMode(NeutralMode.Brake);
 
     TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
 
@@ -55,6 +62,7 @@ public class SwerveModuleMK3 {
     driveTalonFXConfiguration.slot0.kF = kDriveF;
 
     driveMotor.configAllSettings(driveTalonFXConfiguration);
+    driveMotor.setNeutralMode(NeutralMode.Brake);
   }
 
 
@@ -63,7 +71,7 @@ public class SwerveModuleMK3 {
    * @return The relative rotational position of the angle motor in degrees
    */
   public double getAngle() {
-    return canCoder.getAbsolutePosition();
+    return Math.toDegrees(Math.toRadians(canCoder.getAbsolutePosition()) - Math.toRadians(offset)); //include angle offset
   }
 
   /**
@@ -71,6 +79,7 @@ public class SwerveModuleMK3 {
    * @param desiredState - A SwerveModuleState representing the desired new state of the module
    */
   public void setDesiredState(SwerveModuleState desiredState) {
+
     Rotation2d currentRotation = Rotation2d.fromDegrees(getAngle());
     SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation);
     

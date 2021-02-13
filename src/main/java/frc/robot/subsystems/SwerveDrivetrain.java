@@ -12,14 +12,22 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 public class SwerveDrivetrain extends SubsystemBase {
 
-  public static final double kMaxSpeed = Units.feetToMeters(13.6); // 13.6 feet per second
+  public static final double kMaxSpeed = Units.feetToMeters(20); // 13.6 feet per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
+  public static double feildCalibration = 0;
 
+  public static double frontLeftOffset = 281.689;
+  public static double frontRightOffset = 342.86;
+  public static double backLeftOffset = 279.1;
+  public static double backRightOffset = 89.64;
   /**
    * TODO: These are example values and will need to be adjusted for your robot!
    * Modules are in the order of -
@@ -51,13 +59,13 @@ public class SwerveDrivetrain extends SubsystemBase {
     )
   );
 
-  private final AnalogGyro gyro = new AnalogGyro(0);
+  private final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
 
   private SwerveModuleMK3[] modules = new SwerveModuleMK3[] {
-    new SwerveModuleMK3(new TalonFX(1), new TalonFX(2), new CANCoder(0)), // Front Left
-    new SwerveModuleMK3(new TalonFX(3), new TalonFX(4), new CANCoder(1)), // Front Right
-    new SwerveModuleMK3(new TalonFX(5), new TalonFX(6), new CANCoder(2)), // Back Left
-    new SwerveModuleMK3(new TalonFX(7), new TalonFX(8), new CANCoder(3))  // Back Right
+    new SwerveModuleMK3(new TalonFX(1), new TalonFX(3), new CANCoder(2), frontLeftOffset), // Front Left
+    new SwerveModuleMK3(new TalonFX(4), new TalonFX(6), new CANCoder(5), frontRightOffset), // Front Right
+    new SwerveModuleMK3(new TalonFX(10), new TalonFX(12), new CANCoder(11), backLeftOffset), // Back Left
+    new SwerveModuleMK3(new TalonFX(7), new TalonFX(9), new CANCoder(8), backRightOffset)  // Back Right
   };
 
   public SwerveDrivetrain() {
@@ -72,16 +80,22 @@ public class SwerveDrivetrain extends SubsystemBase {
    * @param rot Angular rate of the robot.
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean calibrateGyro) {
+    
+    if(calibrateGyro){
+      double feildCalibration = -gyro.getAngle(); //recalibrates gyro offset
+    }
+
     SwerveModuleState[] states =
       kinematics.toSwerveModuleStates(
         fieldRelative
-          ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+          ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees((-gyro.getAngle() + feildCalibration)))
           : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.normalizeWheelSpeeds(states, kMaxSpeed);
     for (int i = 0; i < states.length; i++) {
       SwerveModuleMK3 module = modules[i];
       SwerveModuleState state = states[i];
+      SmartDashboard.putNumber(String.valueOf(i), module.getAngle());
       module.setDesiredState(state);
     }
   }
