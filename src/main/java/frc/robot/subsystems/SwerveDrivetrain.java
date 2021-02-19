@@ -28,6 +28,22 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static double frontRightOffset = 342.86;
   public static double backLeftOffset = 279.1;
   public static double backRightOffset = 89.64;
+
+  public static final int frontLeftDriveId = 1; 
+  public static final int frontLeftCANCoderId = 2; 
+  public static final int frontLeftSteerId = 3;
+
+  public static final int frontRightDriveId = 4; 
+  public static final int frontRightCANCoderId = 5; 
+  public static final int frontRightSteerId = 6; 
+
+  public static final int backLeftDriveId = 10; 
+  public static final int backLeftCANCoderId = 11; 
+  public static final int backLeftSteerId = 12;
+
+  public static final int backRightDriveId = 7; 
+  public static final int backRightCANCoderId = 8; 
+  public static final int backRightSteerId = 9;   
   /**
    * TODO: These are example values and will need to be adjusted for your robot!
    * Modules are in the order of -
@@ -62,10 +78,10 @@ public class SwerveDrivetrain extends SubsystemBase {
   private final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
 
   private SwerveModuleMK3[] modules = new SwerveModuleMK3[] {
-    new SwerveModuleMK3(new TalonFX(1), new TalonFX(3), new CANCoder(2), frontLeftOffset), // Front Left
-    new SwerveModuleMK3(new TalonFX(4), new TalonFX(6), new CANCoder(5), frontRightOffset), // Front Right
-    new SwerveModuleMK3(new TalonFX(10), new TalonFX(12), new CANCoder(11), backLeftOffset), // Back Left
-    new SwerveModuleMK3(new TalonFX(7), new TalonFX(9), new CANCoder(8), backRightOffset)  // Back Right
+    new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId), new CANCoder(frontRightCANCoderId), frontLeftOffset), // Front Left
+    new SwerveModuleMK3(new TalonFX(frontRightDriveId), new TalonFX(frontRightSteerId), new CANCoder(frontRightSteerId), frontRightOffset), // Front Right
+    new SwerveModuleMK3(new TalonFX(backLeftDriveId), new TalonFX(backLeftSteerId), new CANCoder(backLeftCANCoderId), backLeftOffset), // Back Left
+    new SwerveModuleMK3(new TalonFX(backRightDriveId), new TalonFX(backRightSteerId), new CANCoder(backRightCANCoderId), backRightOffset)  // Back Right
   };
 
   public SwerveDrivetrain() {
