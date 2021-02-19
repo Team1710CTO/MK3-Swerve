@@ -44,18 +44,7 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static final int backRightDriveId = 7; 
   public static final int backRightCANCoderId = 8; 
   public static final int backRightSteerId = 9;   
-  /**
-   * TODO: These are example values and will need to be adjusted for your robot!
-   * Modules are in the order of -
-   * Front Left
-   * Front Right
-   * Back Left
-   * Back Right
-   * 
-   * Positive x values represent moving toward the front of the robot whereas
-   * positive y values represent moving toward the left of the robot
-   * https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html#constructing-the-kinematics-object
-   */
+
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     new Translation2d(
       Units.inchesToMeters(10),
