@@ -52,7 +52,7 @@ public class SwerveModuleMK3 {
     angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
     angleTalonFXConfiguration.integratedSensorOffsetDegrees = offset; //sets angle offset for PID within the talons
     angleMotor.configAllSettings(angleTalonFXConfiguration);
-    angleMotor.setNeutralMode(NeutralMode.Brake);
+    angleMotor.setNeutralMode(NeutralMode.Brake); //not needed but nice to keep the robot stopped when you want it stopped
 
     TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
 
@@ -91,9 +91,13 @@ public class SwerveModuleMK3 {
     // Convert the CANCoder from it's position reading back to ticks
     double currentTicks = canCoder.getPosition() / canCoder.configGetFeedbackCoefficient();
     double desiredTicks = currentTicks + deltaTicks;
+
+    //below is a line to comment out from step 5
     angleMotor.set(TalonFXControlMode.Position, desiredTicks);
 
     double feetPerSecond = Units.metersToFeet(state.speedMetersPerSecond);
+
+    //below is a line to comment out from step 5
     driveMotor.set(TalonFXControlMode.PercentOutput, feetPerSecond / SwerveDrivetrain.kMaxSpeed);
   }
 

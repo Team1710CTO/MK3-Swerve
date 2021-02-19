@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
+
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
@@ -20,27 +20,30 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 public class SwerveDrivetrain extends SubsystemBase {
 
-  public static final double kMaxSpeed = Units.feetToMeters(20); // 13.6 feet per second
+  //these are limits you can change!!!
+  public static final double kMaxSpeed = Units.feetToMeters(20); // 20 feet per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
   public static double feildCalibration = 0;
 
+  //this is where you put the angle offsets you got from the smart dashboard
   public static double frontLeftOffset = 281.689;
   public static double frontRightOffset = 342.86;
   public static double backLeftOffset = 279.1;
   public static double backRightOffset = 89.64;
 
+  //put your can Id's here!
   public static final int frontLeftDriveId = 1; 
   public static final int frontLeftCANCoderId = 2; 
   public static final int frontLeftSteerId = 3;
-
+  //put your can Id's here!
   public static final int frontRightDriveId = 4; 
   public static final int frontRightCANCoderId = 5; 
   public static final int frontRightSteerId = 6; 
-
+  //put your can Id's here!
   public static final int backLeftDriveId = 10; 
   public static final int backLeftCANCoderId = 11; 
   public static final int backLeftSteerId = 12;
-
+  //put your can Id's here!
   public static final int backRightDriveId = 7; 
   public static final int backRightCANCoderId = 8; 
   public static final int backRightSteerId = 9;   
@@ -84,6 +87,7 @@ public class SwerveDrivetrain extends SubsystemBase {
    * @param ySpeed Speed of the robot in the y direction (sideways).
    * @param rot Angular rate of the robot.
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
+   * @param calibrateGyro button to recalibrate the gyro offset
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean calibrateGyro) {
     
@@ -101,6 +105,7 @@ public class SwerveDrivetrain extends SubsystemBase {
       SwerveModuleMK3 module = modules[i];
       SwerveModuleState state = states[i];
       SmartDashboard.putNumber(String.valueOf(i), module.getAngle());
+      //below is a line to comment out from step 5
       module.setDesiredState(state);
     }
   }
