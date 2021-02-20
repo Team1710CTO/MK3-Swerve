@@ -28,10 +28,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 
   //this is where you put the angle offsets you got from the smart dashboard
 
-  public static double frontLeftOffset = 0;
-  public static double frontRightOffset = 0;
-  public static double backLeftOffset = 0;
-  public static double backRightOffset = 0;
+  public static double frontLeftOffset = 80;
+  public static double frontRightOffset = 20;
+  public static double backLeftOffset = 85;
+  public static double backRightOffset = 276;
 
 
   //put your can Id's here!
@@ -43,9 +43,9 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static final int frontRightCANCoderId = 5; 
   public static final int frontRightSteerId = 6; 
   //put your can Id's here!
-  public static final int backLeftDriveId = 7; 
-  public static final int backLeftCANCoderId = 8; 
-  public static final int backLeftSteerId = 9;
+  public static final int backLeftDriveId = 10; 
+  public static final int backLeftCANCoderId = 11; 
+  public static final int backLeftSteerId = 12;
   //put your can Id's here!
 
   public static final int backRightDriveId = 7; 
