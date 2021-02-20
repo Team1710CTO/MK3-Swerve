@@ -70,8 +70,8 @@ public class SwerveDrivetrain extends SubsystemBase {
   private final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
 
   private SwerveModuleMK3[] modules = new SwerveModuleMK3[] {
-    new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId), new CANCoder(frontRightCANCoderId), frontLeftOffset), // Front Left
-    new SwerveModuleMK3(new TalonFX(frontRightDriveId), new TalonFX(frontRightSteerId), new CANCoder(frontRightSteerId), frontRightOffset), // Front Right
+    new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId), new CANCoder(frontLeftCANCoderId), frontLeftOffset), // Front Left
+    new SwerveModuleMK3(new TalonFX(frontRightDriveId), new TalonFX(frontRightSteerId), new CANCoder(frontRightCANCoderId), frontRightOffset), // Front Right
     new SwerveModuleMK3(new TalonFX(backLeftDriveId), new TalonFX(backLeftSteerId), new CANCoder(backLeftCANCoderId), backLeftOffset), // Back Left
     new SwerveModuleMK3(new TalonFX(backRightDriveId), new TalonFX(backRightSteerId), new CANCoder(backRightCANCoderId), backRightOffset)  // Back Right
   };
