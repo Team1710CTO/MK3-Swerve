@@ -27,10 +27,12 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static double feildCalibration = 0;
 
   //this is where you put the angle offsets you got from the smart dashboard
-  public static double frontLeftOffset = 80;
-  public static double frontRightOffset = 20;
-  public static double backLeftOffset = 85;
-  public static double backRightOffset = 276;
+
+  public static double frontLeftOffset = 0;
+  public static double frontRightOffset = 0;
+  public static double backLeftOffset = 0;
+  public static double backRightOffset = 0;
+
 
   //put your can Id's here!
   public static final int frontLeftDriveId = 1; 
@@ -41,14 +43,16 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static final int frontRightCANCoderId = 5; 
   public static final int frontRightSteerId = 6; 
   //put your can Id's here!
-  public static final int backLeftDriveId = 10; 
-  public static final int backLeftCANCoderId = 11; 
-  public static final int backLeftSteerId = 12;
+  public static final int backLeftDriveId = 7; 
+  public static final int backLeftCANCoderId = 8; 
+  public static final int backLeftSteerId = 9;
   //put your can Id's here!
+
   public static final int backRightDriveId = 7; 
   public static final int backRightCANCoderId = 8; 
   public static final int backRightSteerId = 9;   
   public static AHRS gyro = new AHRS(SPI.Port.kMXP);
+
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     new Translation2d(
       Units.inchesToMeters(10),
@@ -71,10 +75,12 @@ public class SwerveDrivetrain extends SubsystemBase {
  
 
   private SwerveModuleMK3[] modules = new SwerveModuleMK3[] {
+
     new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId), new CANCoder(frontLeftCANCoderId), Rotation2d.fromDegrees(frontLeftOffset)), // Front Left
     new SwerveModuleMK3(new TalonFX(frontRightDriveId), new TalonFX(frontRightSteerId), new CANCoder(frontRightCANCoderId), Rotation2d.fromDegrees(frontRightOffset)), // Front Right
     new SwerveModuleMK3(new TalonFX(backLeftDriveId), new TalonFX(backLeftSteerId), new CANCoder(backLeftCANCoderId), Rotation2d.fromDegrees(backLeftOffset)), // Back Left
     new SwerveModuleMK3(new TalonFX(backRightDriveId), new TalonFX(backRightSteerId), new CANCoder(backRightCANCoderId), Rotation2d.fromDegrees(backRightOffset))  // Back Right
+
   };
 
   public SwerveDrivetrain() {
