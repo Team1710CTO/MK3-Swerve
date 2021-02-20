@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrivetrain;
-import frc.robot.subsystems.SwerveModuleMK3;
 
 public class SwerveDriveCommand extends CommandBase {
 
@@ -49,6 +48,10 @@ public class SwerveDriveCommand extends CommandBase {
         * SwerveDrivetrain.kMaxAngularSpeed;
 
     boolean calibrate = controller.getBumper(GenericHID.Hand.kLeft);
+
+    SmartDashboard.putNumber("Forward", ySpeed);
+    SmartDashboard.putNumber("Strafe", xSpeed);
+    SmartDashboard.putNumber("Rotation", rot);
 
     drivetrain.drive(xSpeed, ySpeed, rot, true, calibrate);
     

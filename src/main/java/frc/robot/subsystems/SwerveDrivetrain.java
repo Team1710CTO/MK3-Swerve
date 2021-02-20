@@ -23,7 +23,7 @@ public class SwerveDrivetrain extends SubsystemBase {
   //these are limits you can change!!!
   public static final double kMaxSpeed = Units.feetToMeters(20); // 20 feet per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
-  public static double feildCalibration = 0;
+  public static double fieldCalibration = 0;
 
   //this is where you put the angle offsets you got from the smart dashboard
   public static double frontLeftOffset = 0;
@@ -40,13 +40,13 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static final int frontRightCANCoderId = 5; 
   public static final int frontRightSteerId = 6; 
   //put your can Id's here!
-  public static final int backLeftDriveId = 7; 
-  public static final int backLeftCANCoderId = 8; 
-  public static final int backLeftSteerId = 9;
+  public static final int backRightDriveId = 7; 
+  public static final int backRightCANCoderId = 8; 
+  public static final int backRightSteerId = 9;
   //put your can Id's here!
-  public static final int backRightDriveId = 10; 
-  public static final int backRightCANCoderId = 11; 
-  public static final int backRightSteerId = 12;   
+  public static final int backLeftDriveId = 10; 
+  public static final int backLeftCANCoderId = 11; 
+  public static final int backLeftSteerId = 12;   
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     new Translation2d(
@@ -92,13 +92,13 @@ public class SwerveDrivetrain extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean calibrateGyro) {
     
     if(calibrateGyro){
-      double feildCalibration = -gyro.getAngle(); //recalibrates gyro offset
+      double fieldCalibration = -gyro.getAngle(); //recalibrates gyro offset
     }
 
     SwerveModuleState[] states =
       kinematics.toSwerveModuleStates(
         fieldRelative
-          ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees((-gyro.getAngle() + feildCalibration)))
+          ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees((-gyro.getAngle() + fieldCalibration)))
           : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.normalizeWheelSpeeds(states, kMaxSpeed);
     for (int i = 0; i < states.length; i++) {

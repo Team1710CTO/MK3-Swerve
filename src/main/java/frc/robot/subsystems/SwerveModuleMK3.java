@@ -10,7 +10,6 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModuleMK3 {
