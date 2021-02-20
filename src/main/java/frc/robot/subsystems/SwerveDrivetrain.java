@@ -43,9 +43,9 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static final int frontRightCANCoderId = 5; 
   public static final int frontRightSteerId = 6; 
   //put your can Id's here!
-  public static final int backLeftDriveId = 7; 
-  public static final int backLeftCANCoderId = 8; 
-  public static final int backLeftSteerId = 9;
+  public static final int backLeftDriveId = 10; 
+  public static final int backLeftCANCoderId = 11; 
+  public static final int backLeftSteerId = 12;
   //put your can Id's here!
 
   public static final int backRightDriveId = 7; 
