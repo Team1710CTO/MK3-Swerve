@@ -17,19 +17,20 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 public class SwerveDrivetrain extends SubsystemBase {
 
   //these are limits you can change!!!
-  public static final double kMaxSpeed = Units.feetToMeters(20); // 20 feet per second
+  public static final double kMaxSpeed = Units.feetToMeters(13.6); // 20 feet per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
   public static double feildCalibration = 0;
 
   //this is where you put the angle offsets you got from the smart dashboard
-  public static double frontLeftOffset = 281.689;
-  public static double frontRightOffset = 342.86;
-  public static double backLeftOffset = 279.1;
-  public static double backRightOffset = 89.64;
+  public static double frontLeftOffset = 80;
+  public static double frontRightOffset = 20;
+  public static double backLeftOffset = 85;
+  public static double backRightOffset = 276;
 
   //put your can Id's here!
   public static final int frontLeftDriveId = 1; 
@@ -47,7 +48,7 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static final int backRightDriveId = 7; 
   public static final int backRightCANCoderId = 8; 
   public static final int backRightSteerId = 9;   
-
+  public static AHRS gyro = new AHRS(SPI.Port.kMXP);
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     new Translation2d(
       Units.inchesToMeters(10),
@@ -67,17 +68,17 @@ public class SwerveDrivetrain extends SubsystemBase {
     )
   );
 
-  private final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
+ 
 
   private SwerveModuleMK3[] modules = new SwerveModuleMK3[] {
-    new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId), new CANCoder(frontRightCANCoderId), frontLeftOffset), // Front Left
-    new SwerveModuleMK3(new TalonFX(frontRightDriveId), new TalonFX(frontRightSteerId), new CANCoder(frontRightSteerId), frontRightOffset), // Front Right
-    new SwerveModuleMK3(new TalonFX(backLeftDriveId), new TalonFX(backLeftSteerId), new CANCoder(backLeftCANCoderId), backLeftOffset), // Back Left
-    new SwerveModuleMK3(new TalonFX(backRightDriveId), new TalonFX(backRightSteerId), new CANCoder(backRightCANCoderId), backRightOffset)  // Back Right
+    new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId), new CANCoder(frontLeftCANCoderId), Rotation2d.fromDegrees(frontLeftOffset)), // Front Left
+    new SwerveModuleMK3(new TalonFX(frontRightDriveId), new TalonFX(frontRightSteerId), new CANCoder(frontRightCANCoderId), Rotation2d.fromDegrees(frontRightOffset)), // Front Right
+    new SwerveModuleMK3(new TalonFX(backLeftDriveId), new TalonFX(backLeftSteerId), new CANCoder(backLeftCANCoderId), Rotation2d.fromDegrees(backLeftOffset)), // Back Left
+    new SwerveModuleMK3(new TalonFX(backRightDriveId), new TalonFX(backRightSteerId), new CANCoder(backRightCANCoderId), Rotation2d.fromDegrees(backRightOffset))  // Back Right
   };
 
   public SwerveDrivetrain() {
-    gyro.reset(); 
+   // gyro.reset(); 
   }
 
   /**
@@ -92,21 +93,22 @@ public class SwerveDrivetrain extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean calibrateGyro) {
     
     if(calibrateGyro){
-      double feildCalibration = -gyro.getAngle(); //recalibrates gyro offset
+      gyro.reset(); //recalibrates gyro offset
     }
 
     SwerveModuleState[] states =
       kinematics.toSwerveModuleStates(
         fieldRelative
-          ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees((-gyro.getAngle() + feildCalibration)))
+          ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(-gyro.getAngle()))
           : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.normalizeWheelSpeeds(states, kMaxSpeed);
     for (int i = 0; i < states.length; i++) {
       SwerveModuleMK3 module = modules[i];
       SwerveModuleState state = states[i];
-      SmartDashboard.putNumber(String.valueOf(i), module.getAngle());
+      SmartDashboard.putNumber(String.valueOf(i), module.getRawAngle());
       //below is a line to comment out from step 5
       module.setDesiredState(state);
+      SmartDashboard.putNumber("gyro Angle", gyro.getAngle());
     }
   }
 
