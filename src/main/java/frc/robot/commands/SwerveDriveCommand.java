@@ -49,8 +49,8 @@ public class SwerveDriveCommand extends CommandBase {
 
     boolean calibrate = controller.getBumper(GenericHID.Hand.kLeft);
 
-    SmartDashboard.putNumber("Forward", ySpeed);
-    SmartDashboard.putNumber("Strafe", xSpeed);
+    SmartDashboard.putNumber("Forward", xSpeed);
+    SmartDashboard.putNumber("Strafe", ySpeed);
     SmartDashboard.putNumber("Rotation", rot);
 
     drivetrain.drive(xSpeed, ySpeed, rot, true, calibrate);
