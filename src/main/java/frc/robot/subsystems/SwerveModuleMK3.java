@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
@@ -30,9 +31,9 @@ public class SwerveModuleMK3 {
   private TalonFX driveMotor;
   private TalonFX angleMotor;
   private CANCoder canCoder;
-  private double offset;
+  private Rotation2d offset;
 
-  public SwerveModuleMK3(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder, double offset) {
+  public SwerveModuleMK3(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder, Rotation2d offset) {
     this.driveMotor = driveMotor;
     this.angleMotor = angleMotor;
     this.canCoder = canCoder;
@@ -49,7 +50,6 @@ public class SwerveModuleMK3 {
     angleTalonFXConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
     
     angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
-    angleTalonFXConfiguration.integratedSensorOffsetDegrees = offset; //sets angle offset for PID within the talons
     angleMotor.configAllSettings(angleTalonFXConfiguration);
     angleMotor.setNeutralMode(NeutralMode.Brake); //not needed but nice to keep the robot stopped when you want it stopped
 
@@ -62,6 +62,10 @@ public class SwerveModuleMK3 {
 
     driveMotor.configAllSettings(driveTalonFXConfiguration);
     driveMotor.setNeutralMode(NeutralMode.Brake);
+
+    CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
+    canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
+    canCoder.configAllSettings(canCoderConfiguration);
   }
 
 
@@ -69,8 +73,11 @@ public class SwerveModuleMK3 {
    * Gets the relative rotational position of the module
    * @return The relative rotational position of the angle motor in degrees
    */
-  public double getAngle() {
-    return Math.toDegrees(Math.toRadians(canCoder.getAbsolutePosition()) - Math.toRadians(offset)); //include angle offset
+  public Rotation2d getAngle() {
+    return Rotation2d.fromDegrees(canCoder.getAbsolutePosition()); //include angle offset
+  }
+  public double getRawAngle() {
+    return canCoder.getAbsolutePosition(); //include angle offset
   }
   //:)
   /**
@@ -79,7 +86,7 @@ public class SwerveModuleMK3 {
    */
   public void setDesiredState(SwerveModuleState desiredState) {
 
-    Rotation2d currentRotation = Rotation2d.fromDegrees(getAngle());
+    Rotation2d currentRotation = getAngle();
     SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation);
     
     // Find the difference between our current rotational position + our new rotational position
