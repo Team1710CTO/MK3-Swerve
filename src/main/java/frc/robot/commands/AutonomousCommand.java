@@ -12,10 +12,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 public class AutonomousCommand extends CommandBase {
+    private static int x = 0;
     private int i = 0;
-    List<Double> forwardAr = new ArrayList<>();
-    List<Double> strafeAr = new ArrayList<>();
-    List<Double> rotationAr = new ArrayList<>();
+    public static double forwardSpeed;
+    public static double strafeSpeed;
+    public static double rotation;
+    public static List<Double> forwardAr = new ArrayList<>();
+    public static List<Double> strafeAr = new ArrayList<>();
+    public static List<Double> rotationAr = new ArrayList<>();
     private SwerveDrivetrain drivetrain;
 
     public AutonomousCommand(SwerveDrivetrain drivetrain) {
@@ -30,10 +34,9 @@ public class AutonomousCommand extends CommandBase {
             strafeAr.add(0.0);
             rotationAr.add(ii);
         }*/
-
         Scanner inputStream = null;
         try {
-            String fileName = "movement values 4.csv";
+            String fileName = "movement values 7.csv";
             Path filePath = Filesystem.getDeployDirectory().toPath().resolve(fileName);
             File file = new File(filePath.toString());
             // System.out.println(file.exists());
@@ -44,10 +47,9 @@ public class AutonomousCommand extends CommandBase {
                 String[] arr = data.split(",");
 
                 forwardAr.add(Double.parseDouble(arr[0]));
-                strafeAr.add(Double.parseDouble(arr[1]));
-                rotationAr.add(Double.parseDouble(arr[2]));
+                rotationAr.add(Double.parseDouble(arr[1]));
+                strafeAr.add(Double.parseDouble(arr[2]));
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -59,20 +61,24 @@ public class AutonomousCommand extends CommandBase {
 
     @Override
     public void execute() {
-
-        double forwardSpeed = forwardAr.get(i);
-        double strafeSpeed = strafeAr.get(i);
-        double rotation = rotationAr.get(i);
-
+            forwardSpeed = forwardAr.get(i);
+            strafeSpeed = strafeAr.get(i);
+            rotation = rotationAr.get(i);
+        
         drivetrain.drive(forwardSpeed, strafeSpeed, rotation, false, false);
     }
 
     @Override
     public boolean isFinished() {
-        if (i == forwardAr.size() - 1) {
+        if (i == forwardAr.size()) {
             return true;
         } else {
-            i++;
+            if (x == 4){
+                x = 0;
+                i++;
+            } else {
+               x++; 
+            }
             return false;
         }
     }
