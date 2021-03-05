@@ -21,6 +21,7 @@ public class AutonomousCommand extends CommandBase {
     public static List<Double> strafeAr = new ArrayList<>();
     public static List<Double> rotationAr = new ArrayList<>();
     private SwerveDrivetrain drivetrain;
+    public static boolean isAutonomous = false;
 
     public AutonomousCommand(SwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
@@ -34,6 +35,7 @@ public class AutonomousCommand extends CommandBase {
             strafeAr.add(0.0);
             rotationAr.add(ii);
         }*/
+        isAutonomous = true;
         Scanner inputStream = null;
         try {
             String fileName = "movement values 7.csv";
@@ -73,7 +75,7 @@ public class AutonomousCommand extends CommandBase {
         if (i == forwardAr.size()) {
             return true;
         } else {
-            if (x == 4){
+            if (x == 6){
                 x = 0;
                 i++;
             } else {
