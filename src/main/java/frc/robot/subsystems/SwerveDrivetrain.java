@@ -26,10 +26,10 @@ public class SwerveDrivetrain extends SubsystemBase {
   public static double fieldCalibration = 0;
 
   // this is where you put the angle offsets you got from the smart dashboard
-  public static double frontLeftOffset = 0;
-  public static double frontRightOffset = 0;
-  public static double backLeftOffset = 0;
-  public static double backRightOffset = 0;
+  public static double frontLeftOffset = 182.1 + 180;
+  public static double frontRightOffset = 181.8 + 180;
+  public static double backLeftOffset = 182 + 180;
+  public static double backRightOffset = 182.4 + 180;
 
   // put your can Id's here!
   public static final int frontLeftDriveId = 1;
@@ -98,7 +98,7 @@ public class SwerveDrivetrain extends SubsystemBase {
       SwerveModuleState state = states[i];
       SmartDashboard.putNumber(String.valueOf(i), module.getAngle());
       // below is a line to comment out from step 5
-      module.setDesiredState(state);
+      module.setDesiredState(state, i);
     }
   }
 

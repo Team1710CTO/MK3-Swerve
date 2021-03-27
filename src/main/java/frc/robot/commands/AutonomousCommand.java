@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 public class AutonomousCommand extends CommandBase {
-    private static int x = 0;
     private int i = 0;
     public static double forwardSpeed;
     public static double strafeSpeed;
@@ -31,7 +30,7 @@ public class AutonomousCommand extends CommandBase {
     public void initialize() {
         Scanner inputStream = null;
         try {
-            String fileName = "movement values 13.csv";
+            String fileName = "movement values 23.csv";
             Path filePath = Filesystem.getDeployDirectory().toPath().resolve(fileName);
             File file = new File(filePath.toString());
             inputStream = new Scanner(file);
@@ -58,7 +57,7 @@ public class AutonomousCommand extends CommandBase {
         strafeSpeed = strafeAr.get(i);
         rotation = rotationAr.get(i);
 
-        drivetrain.drive(forwardSpeed * .2, strafeSpeed * .2, rotation * .6, false, false);
+        drivetrain.drive(forwardSpeed * .2, strafeSpeed * .2, rotation * .6 /* + (-0.01*forwardSpeed) */, false, false);
     }
 
     @Override
@@ -66,12 +65,7 @@ public class AutonomousCommand extends CommandBase {
         if (i == forwardAr.size() - 1) {
             return true;
         } else {
-            /*if (x == 5) {
-                x = 0;*/
-                i++;
-            /*} else {
-                x++;
-            }*/
+            i++;
             return false;
         }
     }

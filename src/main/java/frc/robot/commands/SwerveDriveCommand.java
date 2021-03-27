@@ -54,7 +54,7 @@ public class SwerveDriveCommand extends CommandBase {
     // the right by default.
     final var rot = -rotLimiter.calculate(controller.getX(GenericHID.Hand.kRight)) * SwerveDrivetrain.kMaxAngularSpeed;
 
-    boolean calibrate = controller.getBumper(GenericHID.Hand.kLeft);
+    //boolean calibrate = controller.getBumper(GenericHID.Hand.kLeft);
 
     SmartDashboard.putNumber("Forward", xSpeed);
     SmartDashboard.putNumber("Strafe", ySpeed);
@@ -66,7 +66,7 @@ public class SwerveDriveCommand extends CommandBase {
       rotationAr.add(rot);
     }
 
-    drivetrain.drive(xSpeed * .2, ySpeed * .2, (rot * .6) + (-0.01*xSpeed), true, calibrate);
+    drivetrain.drive(xSpeed * .2, ySpeed * .2, (rot * .6) /*+ (0.05*xSpeed)*/, false, false);
 
   }
 
@@ -74,7 +74,7 @@ public class SwerveDriveCommand extends CommandBase {
   public void end(boolean interrupted) {
     if (recordMode) {
       try {
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get("/home/lvuser/movement values 14.csv"));
+        BufferedWriter writer = Files.newBufferedWriter(Paths.get("/home/lvuser/movement values 24.csv"));
 
         // write all records
         for (int i = 0; xspeedAr.size() > i; i++) {
@@ -85,11 +85,11 @@ public class SwerveDriveCommand extends CommandBase {
         }
 
         writer.close();
-        SmartDashboard.putBoolean("Write Status", true);
+        //SmartDashboard.putBoolean("Write Status", true);
 
       } catch (IOException ex) {
         ex.printStackTrace();
-        SmartDashboard.putBoolean("Write Status", false);
+        //SmartDashboard.putBoolean("Write Status", false);
       }
     }
   }
