@@ -5,7 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.SwerveDriveCommand;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 /**
@@ -20,8 +22,14 @@ public class RobotContainer {
 
   private final SwerveDrivetrain drivetrain = new SwerveDrivetrain();
 
+  private final AutonomousCommand autoCommand = new AutonomousCommand(drivetrain);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drivetrain.setDefaultCommand(new SwerveDriveCommand(drivetrain, controller));
+  }
+  public Command getAutonomousCommand() {
+    // An ExampleCommand will run in autonomous
+    return autoCommand;
   }
 }

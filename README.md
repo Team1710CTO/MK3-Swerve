@@ -1,7 +1,7 @@
 <H1> MK3 swerve calibration instructions</h1>
 <b>Please read through entire readme before deploying to robot.</b>
 <ol>
-  <li>Make sure your firmware is relitivly up to date!</li>
+  <li>Make sure your firmware is relatively up to date!</li>
       <ol>
       <li> Our bots current firmware versions:</li>
       <li> Roborio: 2021_v3</li>

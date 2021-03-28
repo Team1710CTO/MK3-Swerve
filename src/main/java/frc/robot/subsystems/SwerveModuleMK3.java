@@ -7,11 +7,9 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModuleMK3 {
@@ -32,9 +30,9 @@ public class SwerveModuleMK3 {
   private TalonFX driveMotor;
   private TalonFX angleMotor;
   private CANCoder canCoder;
-  private Rotation2d offset;
+  private double offset;
 
-  public SwerveModuleMK3(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder, Rotation2d offset) {
+  public SwerveModuleMK3(TalonFX driveMotor, TalonFX angleMotor, CANCoder canCoder, double offset) {
     this.driveMotor = driveMotor;
     this.angleMotor = angleMotor;
     this.canCoder = canCoder;
@@ -51,6 +49,7 @@ public class SwerveModuleMK3 {
     angleTalonFXConfiguration.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
     
     angleTalonFXConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+    angleTalonFXConfiguration.integratedSensorOffsetDegrees = offset; //sets angle offset for PID within the talons
     angleMotor.configAllSettings(angleTalonFXConfiguration);
     angleMotor.setNeutralMode(NeutralMode.Brake); //not needed but nice to keep the robot stopped when you want it stopped
 
@@ -63,10 +62,6 @@ public class SwerveModuleMK3 {
 
     driveMotor.configAllSettings(driveTalonFXConfiguration);
     driveMotor.setNeutralMode(NeutralMode.Brake);
-
-    CANCoderConfiguration canCoderConfiguration = new CANCoderConfiguration();
-    canCoderConfiguration.magnetOffsetDegrees = offset.getDegrees();
-    canCoder.configAllSettings(canCoderConfiguration);
   }
 
 
@@ -74,20 +69,17 @@ public class SwerveModuleMK3 {
    * Gets the relative rotational position of the module
    * @return The relative rotational position of the angle motor in degrees
    */
-  public Rotation2d getAngle() {
-    return Rotation2d.fromDegrees(canCoder.getAbsolutePosition()); //include angle offset
-  }
-  public double getRawAngle() {
-    return canCoder.getAbsolutePosition(); //include angle offset
+  public double getAngle() {
+    return Math.toDegrees(Math.toRadians(canCoder.getAbsolutePosition()) - Math.toRadians(offset)); //include angle offset
   }
   //:)
   /**
    * Set the speed + rotation of the swerve module from a SwerveModuleState object
    * @param desiredState - A SwerveModuleState representing the desired new state of the module
    */
-  public void setDesiredState(SwerveModuleState desiredState) {
+  public void setDesiredState(SwerveModuleState desiredState, int module, boolean isLeft, boolean isRight, double stray) {
 
-    Rotation2d currentRotation = getAngle();
+    Rotation2d currentRotation = Rotation2d.fromDegrees(getAngle());
     SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation);
     
     // Find the difference between our current rotational position + our new rotational position
@@ -104,6 +96,15 @@ public class SwerveModuleMK3 {
 
     double feetPerSecond = Units.metersToFeet(state.speedMetersPerSecond);
 
+    if(isRight){
+      if(module == 0 || module == 2){
+        feetPerSecond = feetPerSecond + 0.4*stray; //rotation offset; multiplier may need changing
+      }
+    } else if (isLeft){
+      if(module == 1 || module == 3){
+        feetPerSecond = feetPerSecond + 0.4*stray; //rotation offset; multiplier may need changing
+      }
+    }
     //below is a line to comment out from step 5
     driveMotor.set(TalonFXControlMode.PercentOutput, feetPerSecond / SwerveDrivetrain.kMaxSpeed);
   }
