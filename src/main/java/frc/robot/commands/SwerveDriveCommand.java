@@ -36,6 +36,10 @@ public class SwerveDriveCommand extends CommandBase {
 
     this.controller = controller;
   }
+  @Override
+  public void initialize(){
+    drivetrain.gyro.reset();
+  }
 
   @Override
   public void execute() {

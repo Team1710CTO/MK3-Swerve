@@ -77,7 +77,7 @@ public class SwerveModuleMK3 {
    * Set the speed + rotation of the swerve module from a SwerveModuleState object
    * @param desiredState - A SwerveModuleState representing the desired new state of the module
    */
-  public void setDesiredState(SwerveModuleState desiredState, int module) {
+  public void setDesiredState(SwerveModuleState desiredState, int module, boolean isLeft, boolean isRight, double stray) {
 
     Rotation2d currentRotation = Rotation2d.fromDegrees(getAngle());
     SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentRotation);
@@ -96,10 +96,15 @@ public class SwerveModuleMK3 {
 
     double feetPerSecond = Units.metersToFeet(state.speedMetersPerSecond);
 
-    if(module == 0 || module == 2){
-      feetPerSecond = 1.22*feetPerSecond; //rotation offset; multiplier may need changing
+    if(isRight){
+      if(module == 0 || module == 2){
+        feetPerSecond = feetPerSecond + 0.4*stray; //rotation offset; multiplier may need changing
+      }
+    } else if (isLeft){
+      if(module == 1 || module == 3){
+        feetPerSecond = feetPerSecond + 0.4*stray; //rotation offset; multiplier may need changing
+      }
     }
-
     //below is a line to comment out from step 5
     driveMotor.set(TalonFXControlMode.PercentOutput, feetPerSecond / SwerveDrivetrain.kMaxSpeed);
   }

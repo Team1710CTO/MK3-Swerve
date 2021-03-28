@@ -54,7 +54,7 @@ public class SwerveDrivetrain extends SubsystemBase {
       new Translation2d(Units.inchesToMeters(-10), Units.inchesToMeters(10)),
       new Translation2d(Units.inchesToMeters(-10), Units.inchesToMeters(-10)));
 
-  private final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
+  public final AHRS gyro = new AHRS(SerialPort.Port.kMXP);
 
   private SwerveModuleMK3[] modules = new SwerveModuleMK3[] {
       new SwerveModuleMK3(new TalonFX(frontLeftDriveId), new TalonFX(frontLeftSteerId),
@@ -83,8 +83,14 @@ public class SwerveDrivetrain extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean calibrateGyro) {
 
+    boolean left = false;
+    boolean right = false;
+    double stray = 0;
+
     if (calibrateGyro) {
       fieldCalibration = -gyro.getAngle(); // recalibrates gyro offset
+    } else if (Math.abs(rot) > 0.1) {
+      gyro.reset();
     }
 
     SwerveModuleState[] states = kinematics
@@ -92,15 +98,27 @@ public class SwerveDrivetrain extends SubsystemBase {
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
                 Rotation2d.fromDegrees((-gyro.getAngle() + fieldCalibration)))
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
+
     SwerveDriveKinematics.normalizeWheelSpeeds(states, kMaxSpeed);
+
+    if(gyro.getAngle() > 0.4 && gyro.getAngle() < 359.6){
+        if (gyro.getAngle()>180){
+          left = true;
+          stray = 360 - gyro.getAngle();
+        } else {
+          right = true;
+          stray = gyro.getAngle();
+        }
+    }
+
     for (int i = 0; i < states.length; i++) {
       SwerveModuleMK3 module = modules[i];
       SwerveModuleState state = states[i];
       SmartDashboard.putNumber(String.valueOf(i), module.getAngle());
       // below is a line to comment out from step 5
-      module.setDesiredState(state, i);
+      module.setDesiredState(state, i, left, right, stray);
     }
-  }
+}
 
   @Override
   public void periodic() {
